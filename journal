@@ -1,0 +1,54 @@
+#!/bin/bash
+
+declare entry_path="/home/toby/docs/logs/"
+
+declare argno=$#
+if [ $argno -eq 2 ]; then
+    declare arg2=$2
+fi
+
+usage() {
+    echo "Usage: journal <write:read:list:help> <args>"
+}
+
+# CRU- functions
+write_entry() {
+    local file="$entry_path$(date '+%d%m%y')"
+    vim $file
+}
+
+read_entry() {
+    if [ $argno -lt 2 ]; then
+        usage
+        echo "Must provide entry date as arg"
+        exit 1
+    fi
+
+    local file=$entry_path$arg2
+    if [ ! -f $file ]; then
+        usage
+        echo "File not found '$file'"
+        exit 1
+    fi
+
+    vim $file
+}
+
+list_entries() {
+    ls -1 "/home/toby/docs/logs"
+}
+
+
+# Run appropriate function based off command (first arg)
+if [ $argno -eq 0 ]; then
+    write_entry
+fi
+if [ $1 = "write" ]; then
+    write_entry
+elif [ $1 = "read" ]; then
+    read_entry
+elif [ $1 = "list" ]; then
+    list_entries
+else
+    usage
+fi
